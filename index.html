@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Writing Practice</title>
+<style>
+  :root {
+    --primary: #1e40af;
+    --primary-light: #dbeafe;
+    --accent: #f59e0b;
+    --danger: #dc2626;
+    --success: #059669;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --male: #2563eb;
+    --female: #e11d48;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    color: white;
+    padding: 28px 32px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px rgba(30, 64, 175, 0.15);
+  }
+  .header h1 { font-size: 26px; margin-bottom: 4px; }
+  .header p { opacity: 0.9; font-size: 14px; }
+
+  /* ===== Tabs ===== */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .tab {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .tab:hover { background: var(--primary-light); color: var(--primary); }
+  .tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+  }
+  .tab .badge {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tab.active .badge { background: rgba(255,255,255,0.3); }
+
+  /* ===== Task Panel ===== */
+  .task-panel { display: none; }
+  .task-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+
+  .task-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 2px dashed var(--border);
+  }
+  .task-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .task-info {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .info-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .info-chip.timer {
+    background: #fef3c7;
+    color: #92400e;
+    font-variant-numeric: tabular-nums;
+  }
+  .info-chip.timer.warning { background: #fee2e2; color: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: 0.6; } }
+
+  .prompt {
+    background: #f9fafb;
+    border-left: 4px solid var(--primary);
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+  .prompt strong { color: var(--primary); }
+
+  /* ===== Bar Chart ===== */
+  .chart-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  }
+  .chart-title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 14px; height: 14px; border-radius: 3px;
+  }
+
+  .chart {
+    position: relative;
+    height: 320px;
+    display: flex;
+    padding-left: 45px;
+    padding-bottom: 60px;
+    padding-right: 10px;
+  }
+
+  /* Y-axis */
+  .y-axis {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 60px;
+    width: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .y-axis span { text-align: right; padding-right: 8px; }
+
+  /* Grid lines */
+  .grid {
+    position: absolute;
+    left: 45px;
+    right: 10px;
+    top: 0;
+    bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .grid-line {
+    height: 1px;
+    background: #f1f5f9;
+    width: 100%;
+  }
+  .grid-line:last-child { background: #cbd5e1; }
+
+  /* Plot area */
+  .plot {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    position: relative;
+    z-index: 2;
+  }
+
+  .bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 140px;
+  }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 260px;
+  }
+  .bar {
+    width: 28px;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+  .bar.male { background: linear-gradient(to top, var(--male), #60a5fa); }
+  .bar.female { background: linear-gradient(to top, var(--female), #fb7185); }
+  .bar:hover { transform: scaleY(1.02); filter: brightness(1.1); }
+  .bar-value {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .bar:hover .bar-value { opacity: 1; }
+
+  .bar-label {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    max-width: 100px;
+    line-height: 1.3;
+  }
+
+  /* ===== Writing Area ===== */
+  .writing-area {
+    position: relative;
+  }
+  textarea {
+    width: 100%;
+    min-height: 280px;
+    padding: 20px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    line-height: 1.8;
+    resize: vertical;
+    transition: border-color 0.2s;
+    background: #fefefe;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+  }
+
+  .writing-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .word-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .word-count .current { color: var(--primary); font-size: 16px; }
+  .word-count .target { color: var(--success); }
+  .word-count.low .current { color: var(--danger); }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-primary:hover { background: #1e3a8a; transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .btn-secondary:hover { background: #bfdbfe; }
+  .btn-danger {
+    background: #fee2e2;
+    color: var(--danger);
+  }
+  .btn-danger:hover { background: #fecaca; }
+
+  /* ===== Model Answer ===== */
+  .model-answer {
+    display: none;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 2px solid var(--success);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .model-answer.show { display: block; animation: fadeIn 0.3s; }
+  .model-answer h4 {
+    color: var(--success);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .model-answer p {
+    font-family: Georgia, serif;
+    font-size: 14.5px;
+    line-height: 1.9;
+    margin-bottom: 12px;
+    color: #064e3b;
+  }
+
+  /* ===== Tips ===== */
+  .tips {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent);
+  }
+  .tips h4 {
+    color: #92400e;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  .tips ul { list-style: none; }
+  .tips li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    font-size: 14px;
+    color: #78350f;
+  }
+  .tips li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    .header { padding: 20px; }
+    .header h1 { font-size: 22px; }
+    .card, .chart-card { padding: 18px; }
+    .chart { height: 280px; padding-left: 35px; }
+    .y-axis { width: 35px; font-size: 10px; }
+    .bars { height: 220px; }
+    .bar { width: 20px; }
+    .bar-label { font-size: 10px; max-width: 60px; }
+    .tab { font-size: 13px; padding: 12px 10px; }
+    .task-title { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>✍️ IELTS Writing Practice</h1>
+    <p>Academic Module · Target Band 7 · Auto-saved drafts</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" onclick="switchTask(1, this)" role="tab">
+      📊 Task 1 <span class="badge">20 min</span>
+    </button>
+    <button class="tab" onclick="switchTask(2, this)" role="tab">
+      📝 Task 2 <span class="badge">40 min</span>
+    </button>
+  </div>
+
+  <!-- ============ TASK 1 ============ -->
+  <div class="task-panel active" id="task1">
+
+    <div class="card">
+      <div class="task-meta">
+        <div class="task-title">Task 1 — Report</div>
+        <div class="task-info">
+          <span class="info-chip">⏱ <span id="timer1">20:00</span></span>
+          <span class="info-chip">🎯 Min 150 words</span>
+        </div>
+      </div>
+
+      <div class="prompt">
+        <strong>Question:</strong> The bar chart below shows the percentage of men and women in Australia who participated in five different leisure activities in 2023.<br><br>
+        <em>Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</em>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="chart-card">
+      <div class="chart-title">Participation in Leisure Activities in Australia, 2023</div>
+      <div class="chart-subtitle">Percentage of adults by gender</div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--male);"></span> Men
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--female);"></span> Women
+        </div>
+      </div>
+
+      <div class="chart">
+        <!-- Y-axis -->
+        <div class="y-axis">
+          <span>100%</span>
+          <span>75%</span>
+          <span>50%</span>
+          <span>25%</span>
+          <span>0%</span>
+        </div>
+
+        <!-- Grid lines -->
+        <div class="grid">
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+        </div>
+
+        <!-- Plot -->
+        <div class="plot">
+
+          <!-- 1. Watching TV: M 85%, W 80% -->
+          <div class="bar-group">
+            <div class="bars">
+              <div class="bar male" style="height: 85%;"><span class="bar-value">85%</span></div>
+              <div class="bar female" style="height: 80%;"><span class="bar-value">80%</span></div>
+            </div>
+            <div class="bar-label">Watching TV</div>
+          </div>
+
+          <!-- 2. Socializing: M 70%, W 75% -->
+          <div class="bar-group">
+            <div class="bars">
+              <div class="bar male" style="height: 70%;"><span class="bar-value">70%</span></div>
+              <div class="bar female" style="height: 75%;"><span class="bar-value">75%</span></div>
+            </div>
+            <div class="bar-label">Socializing</div>
+          </div>
+
+          <!-- 3. Playing Sports: M 60%, W 35% -->
+          <div class="bar-group">
+            <div class="bars">
+              <div class="bar male" style="height: 60%;"><span class="bar-value">60%</span></div>
+              <div class="bar female" style="height: 35%;"><span class="bar-value">35%</span></div>
+            </div>
+            <div class="bar-label">Playing Sports</div>
+          </div>
+
+          <!-- 4. Gardening: M 45%, W 50% -->
+          <div class="bar-group">
+            <div class="bars">
+              <div class="bar male" style="height: 45%;"><span class="bar-value">45%</span></div>
+              <div class="bar female" style="height: 50%;"><span class="bar-value">50%</span></div>
+            </div>
+            <div class="bar-label">Gardening</div>
+          </div>
+
+          <!-- 5. Reading: M 40%, W 65% -->
+          <div class="bar-group">
+            <div class="bars">
+              <div class="bar male" style="height: 40%;"><span class="bar-value">40%</span></div>
+              <div class="bar female" style="height: 65%;"><span class="bar-value">65%</span></div>
+            </div>
+            <div class="bar-label">Reading</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Writing Area -->
+    <div class="card">
+      <div class="writing-area">
+        <textarea id="text1" placeholder="Start writing your Task 1 report here..."></textarea>
+      </div>
+      <div class="writing-footer">
+        <div class="word-count" id="wc1">
+          Words: <span class="current">0</span> / <span class="target">150 minimum</span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary" onclick="toggleModel(1)">💡 Show Model Answer</button>
+          <button class="btn btn-danger" onclick="clearText(1)">🗑 Clear</button>
+        </div>
+      </div>
+
+      <!-- Model Answer -->
+      <div class="model-answer" id="model1">
+        <h4>🏆 Band 7+ Model Answer</h4>
+        <p>The bar chart illustrates the proportions of Australian men and women who engaged in five distinct leisure activities in 2023.</p>
+        <p><strong>Overall,</strong> it is clear that watching TV was the most popular pastime for both genders, while reading and playing sports showed the most significant gender differences. Generally, men preferred more active or screen-based leisure, whereas women showed higher participation in reading.</p>
+        <p>Looking at the most popular activities, watching TV was highly favoured by both men (85%) and women (80%). Socialising was also common, with slightly more women (75%) participating compared to men (70%).</p>
+        <p>However, distinct gender preferences emerged in the remaining categories. Playing sports was considerably more popular among men (60%) than women (35%). Conversely, reading was much more prevalent among women (65%) compared to men (40%). Finally, gardening attracted a similar, moderate percentage of both men (45%) and women (50%).</p>
+      </div>
+
+      <div class="tips">
+        <h4>💡 Tips for Band 7</h4>
+        <ul>
+          <li>Include a clear <strong>Overview paragraph</strong> starting with "Overall,..."</li>
+          <li><strong>Group the data</strong> — don't list every number one by one</li>
+          <li>Use <strong>comparisons</strong>: "whereas", "conversely", "significantly higher"</li>
+          <li>Use varied vocabulary: "proportion", "percentage", "participation rate"</li>
+          <li>Write at least <strong>150 words</strong> (aim for 170–190)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 2 ============ -->
+  <div class="task-panel" id="task2">
+
+    <div class="card">
+      <div class="task-meta">
+        <div class="task-title">Task 2 — Essay</div>
+        <div class="task-info">
+          <span class="info-chip">⏱ <span id="timer2">40:00</span></span>
+          <span class="info-chip">🎯 Min 250 words</span>
+        </div>
+      </div>
+
+      <div class="prompt">
+        <strong>Question:</strong> Some people think that technology has made our lives more complex, while others believe it has made them simpler.<br><br>
+        <em>Discuss both these views and give your own opinion.</em>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="writing-area">
+        <textarea id="text2" placeholder="Start writing your Task 2 essay here..."></textarea>
+      </div>
+      <div class="writing-footer">
+        <div class="word-count" id="wc2">
+          Words: <span class="current">0</span> / <span class="target">250 minimum</span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary" onclick="toggleModel(2)">💡 Show Model Answer</button>
+          <button class="btn btn-danger" onclick="clearText(2)">🗑 Clear</button>
+        </div>
+      </div>
+
+      <div class="model-answer" id="model2">
+        <h4>🏆 Band 7+ Model Answer</h4>
+        <p>The impact of technology on daily life is a subject of frequent debate. While some argue that technological advancements have complicated our existence, others contend that they have streamlined our routines. This essay will examine both perspectives before concluding that technology ultimately simplifies life.</p>
+        <p>On the one hand, those who argue that technology makes life more complex point to the steep learning curves and constant updates. For instance, older generations often struggle to adapt to digital banking, feeling alienated by systems that were once simple. Furthermore, digital communication tools, such as emails, have blurred the lines between work and personal life. Employees are now expected to be reachable 24/7, leading to increased stress and a more complicated work-life balance.</p>
+        <p>On the other hand, the argument that technology simplifies life is highly compelling. The primary reason is the unprecedented access to information and services. Tasks that previously took hours, such as researching for an essay or booking a flight, can now be completed in minutes. Additionally, automation handles mundane household chores. For example, robotic vacuum cleaners manage home maintenance with minimal human intervention, making daily living significantly easier.</p>
+        <p>In my opinion, while technology introduces new challenges, such as digital fatigue, the benefits far outweigh the drawbacks. The core function of technology is to solve problems, and it has undeniably made fundamental aspects of life much more efficient.</p>
+        <p>In conclusion, although technology can complicate life by demanding constant adaptation, its ability to automate tasks and provide instant access to information makes it a profoundly simplifying force.</p>
+      </div>
+
+      <div class="tips">
+        <h4>💡 Tips for Band 7</h4>
+        <ul>
+          <li>Use a <strong>4-paragraph structure</strong>: Intro, View 1, View 2 + Opinion, Conclusion</li>
+          <li>Use <strong>complex sentences</strong>: "Although...", "While some argue..., others..."</li>
+          <li>Include <strong>specific examples</strong> to support each point</li>
+          <li>Make your opinion <strong>clear throughout</strong>, not just at the end</li>
+          <li>Write at least <strong>250 words</strong> (aim for 270–290)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== Tab Switching =====
+  function switchTask(num, btn) {
+    document.querySelectorAll('.task-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('task' + num).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ===== Word Counter =====
+  function countWords(text) {
+    const trimmed = text.trim();
+    if (trimmed === '') return 0;
+    return trimmed.split(/\s+/).length;
+  }
+
+  function updateWordCount(taskNum) {
+    const textarea = document.getElementById('text' + taskNum);
+    const wc = document.getElementById('wc' + taskNum);
+    const count = countWords(textarea.value);
+    const target = taskNum === 1 ? 150 : 250;
+    const currentSpan = wc.querySelector('.current');
+    currentSpan.textContent = count;
+    if (count < target) {
+      wc.classList.add('low');
+    } else {
+      wc.classList.remove('low');
+    }
+  }
+
+  document.getElementById('text1').addEventListener('input', () => {
+    updateWordCount(1);
+    saveDraft(1);
+  });
+  document.getElementById('text2').addEventListener('input', () => {
+    updateWordCount(2);
+    saveDraft(2);
+  });
+
+  // ===== Auto-save to localStorage =====
+  function saveDraft(taskNum) {
+    try {
+      localStorage.setItem('ielts_task' + taskNum, document.getElementById('text' + taskNum).value);
+    } catch (e) {}
+  }
+
+  function loadDraft(taskNum) {
+    try {
+      const saved = localStorage.getItem('ielts_task' + taskNum);
+      if (saved) {
+        document.getElementById('text' + taskNum).value = saved;
+        updateWordCount(taskNum);
+      }
+    } catch (e) {}
+  }
+
+  loadDraft(1);
+  loadDraft(2);
+
+  // ===== Clear Text =====
+  function clearText(taskNum) {
+    if (confirm('Are you sure you want to clear your writing? This cannot be undone.')) {
+      document.getElementById('text' + taskNum).value = '';
+      updateWordCount(taskNum);
+      saveDraft(taskNum);
+    }
+  }
+
+  // ===== Toggle Model Answer =====
+  function toggleModel(taskNum) {
+    const model = document.getElementById('model' + taskNum);
+    model.classList.toggle('show');
+  }
+
+  // ===== Countdown Timers =====
+  function startTimer(taskNum, minutes) {
+    const display = document.getElementById('timer' + taskNum);
+    let totalSeconds = minutes * 60;
+
+    // Check if timer was already running
+    const savedEnd = localStorage.getItem('ielts_timer_end' + taskNum);
+    if (savedEnd) {
+      const remaining = Math.floor((parseInt(savedEnd) - Date.now()) / 1000);
+      if (remaining > 0) totalSeconds = remaining;
+      else totalSeconds = 0;
+    } else {
+      localStorage.setItem('ielts_timer_end' + taskNum, Date.now() + totalSeconds * 1000);
+    }
+
+    function tick() {
+      if (totalSeconds <= 0) {
+        display.textContent = "00:00";
+        display.parentElement.classList.add('warning');
+        return;
+      }
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      display.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      if (totalSeconds <= 60) {
+        display.parentElement.classList.add('warning');
+      }
+      totalSeconds--;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  startTimer(1, 20);
+  startTimer(2, 40);
+</script>
+
+</body>
+</html>
